@@ -1,0 +1,26 @@
+import mongoose, { Schema, Document } from "mongoose";
+
+/**
+ * Defines the schema for a Todo document and exports a mongoose model for it.
+ * @interface ITodo - The interface for a Todo document.
+ * @property {string} title - The title of the Todo.
+ * @property {Date} deadline - The deadline for the Todo.
+ * @constant {Schema} TodoSchema - The mongoose schema for a Todo document.
+ * @default
+ * {
+ *   title: { type: String, required: true },
+ *   deadline: { type: Date, required: true },
+ * }
+ * @returns A mongoose model for a Todo document.
+ */
+export interface ITodo extends Document {
+  title: string;
+  deadline: Date;
+}
+
+const TodoSchema: Schema = new Schema({
+  title: { type: String, required: true },
+  deadline: { type: Date, required: true },
+});
+
+export default mongoose.model<ITodo>("Todo", TodoSchema);
