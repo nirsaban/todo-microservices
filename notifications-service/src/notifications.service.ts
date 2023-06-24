@@ -1,5 +1,5 @@
 import { RabbitMQHelper } from "./RabbitMQ.helper";
-
+import amqp, { ConsumeMessage, Channel } from "amqplib";
 export class TodoDTO {
   title: string;
   deadline: Date;
@@ -18,7 +18,7 @@ export class NotificationService {
     });
   }
 
-  private handleTodoMessage = (todo: TodoDTO): void => {
+  private handleTodoMessage = (todo: TodoDTO | null): void => {
     if (this.isTodoExpired(todo)) {
       this.sendNotification(todo);
     }
