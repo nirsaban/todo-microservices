@@ -22,9 +22,9 @@ export class TodosController {
 
       const todoDTO = new TodoDTO(title, deadline);
 
-      const createdTodo: TodoDTO = await this.service.createTodo(todoDTO);
-
       await Validator.validate(todoDTO);
+      
+      const createdTodo: TodoDTO = await this.service.createTodo(todoDTO);
 
       res.send(createdTodo);
     } catch (error) {
