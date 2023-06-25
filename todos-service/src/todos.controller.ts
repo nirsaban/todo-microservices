@@ -18,13 +18,13 @@ export class TodosController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { title, deadline } = req.body;
-
-      const todoDTO = new TodoDTO(title, deadline);
+      const todoDTO = new TodoDTO(req.body);
 
       await Validator.validate(todoDTO);
-      
+
       const createdTodo: TodoDTO = await this.service.createTodo(todoDTO);
+
+      await Validator.validate(todoDTO);
 
       res.send(createdTodo);
     } catch (error) {
@@ -39,9 +39,8 @@ export class TodosController {
   ): Promise<void> => {
     try {
       const todoId = req.params.id;
-      const { title, deadline } = req.body;
 
-      const todoDTO = new TodoDTO(title, deadline);
+      const todoDTO = new TodoDTO(req.body);
 
       await Validator.validatePartial(todoDTO);
 

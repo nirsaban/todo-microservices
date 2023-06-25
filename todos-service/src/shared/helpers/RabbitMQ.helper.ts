@@ -1,4 +1,4 @@
-import amqp, { ConsumeMessage, Channel } from "amqplib";
+import amqp, { ConsumeMessage, Channel, Options } from "amqplib";
 
 /**
  * A helper class for connecting to and interacting with RabbitMQ.
@@ -36,9 +36,15 @@ export class RabbitMQHelper {
    * @returns {Promise<void>} - A promise that resolves when the message has been sent.
    * @throws {Error} - If there is an error sending the message to the queue.
    */
-  public async sendMessage(message: string): Promise<void> {
+  public async sendMessage(
+    message: string,
+    options: Options.Publish
+  ): Promise<void> {
     try {
-      await this.channel.sendToQueue(this.queue, Buffer.from(message));
+      await this.channel.sendToQueue(this.queue, Buffer.from(message), {
+        headers: { "x-delay": options.delay },
+      });
+      console.log("Message sent:", message);
     } catch (error) {
       console.error("Error sending message to RabbitMQ:", error.message);
       throw error;

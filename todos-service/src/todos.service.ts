@@ -13,6 +13,7 @@ export class TodoService {
       const todo = new Todo({
         title: todoDTO.title,
         deadline: todoDTO.deadline,
+        status: todoDTO.status,
       });
 
       const createdTodo = await todo.save();
@@ -23,12 +24,20 @@ export class TodoService {
 
       const message = JSON.stringify(createdTodo);
 
-      await rabbitMQService.sendMessage(message);
+      const now = new Date();
+      const deadline = new Date(todo.deadline);
+      const delay: number = this.calculateDelay(deadline, now);
+
+      await rabbitMQService.sendMessage(message, { delay });
 
       return createdTodo;
     } catch (error) {
       throw new GeneralError(error.message);
     }
+  }
+
+  private calculateDelay(deadline: Date, now: Date): number {
+    return deadline.getTime() - now.getTime();
   }
 
   public async editTodo(
@@ -38,10 +47,7 @@ export class TodoService {
     try {
       const updatedTodo = await Todo.findByIdAndUpdate(
         todoId,
-        {
-          title: todoDTO.title,
-          deadline: todoDTO.deadline,
-        },
+        { ...todoDTO },
         { new: true }
       );
 
